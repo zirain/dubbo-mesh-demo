@@ -36,19 +36,6 @@
             <artifactId>dubbo-registry-api</artifactId>
             <version>${dubbo.version}</version>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>com.ecwid.consul</groupId>
-            <artifactId>consul-api</artifactId>
-            <version>1.4.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.orbitz.consul</groupId>
-            <artifactId>consul-client</artifactId>
-            <version>1.4.2</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-registry-zookeeper</artifactId>

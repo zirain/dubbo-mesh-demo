@@ -6,6 +6,7 @@
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="demo-consumer"/>
-    <dubbo:registry address="zookeeper://zk.dubbo:2181" client="curator" />
+    <dubbo:registry address="none" register="false" subscribe="false" check="false" />
+    <!--<dubbo:registry address="zookeeper://zk.dubbo:2181" client="curator" />-->
     <dubbo:reference id="demoService" check="false" interface="tencent.demo.DemoService" />
 </beans>

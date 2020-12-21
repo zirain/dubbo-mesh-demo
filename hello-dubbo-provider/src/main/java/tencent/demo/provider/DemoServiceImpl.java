@@ -8,22 +8,24 @@ import java.net.UnknownHostException;
 public class DemoServiceImpl implements DemoService {
 
     public String sayHello(String name) {
-        String myHost = "";
+        var myHost = "";
+        var myAddress = "";
         try {
             InetAddress inetAddress = InetAddress.getLocalHost();
-            myHost = inetAddress.getHostAddress();
+            myAddress = inetAddress.getHostAddress();
+            myHost = inetAddress.getHostName();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 
 
-        String namespace = System.getenv("ns");
+        var namespace = System.getenv("POD_NAMESPACE");
 
         if (namespace == null) {
-            namespace = "未知";
+            namespace = "unkown";
         }
 
 
-        return "你好：" + name + ", V2 来自 " + namespace + " 空间 @ " + myHost;
+        return name + ",form [ns]=" + namespace + "@" + myHost + ":" + myAddress;
     }
 }

@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-dubbo-provider
+  namespace: dubbo
+  labels:
+    app: hello-dubbo-provider
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-dubbo-provider
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: hello-dubbo-provider
+        version: v1
+    spec:
+      containers:
+        - name: hello-dubbo-provider
+          image: zirain/hello-dubbo-provider:v1
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          ports:
+            - containerPort: 20880
+              protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-dubbo-provider-v2
+  namespace: dubbo
+  labels:
+    app: hello-dubbo-provider
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-dubbo-provider
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: hello-dubbo-provider
+        version: v2
+    spec:
+      containers:
+        - name: hello-dubbo-provider
+          image: zirain/hello-dubbo-provider:v1
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          ports:
+            - containerPort: 20880
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-dubbo-provider
+  namespace: dubbo
+  labels:
+    name: hello-dubbo-provider
+spec:
+  ports:
+    - name: dubbo-rpc
+      protocol: TCP
+      port: 20880
+      targetPort: 20880
+  selector:
+    app: hello-dubbo-provider
