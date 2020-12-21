@@ -1,0 +1,57 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: dubbo-proxy
+  namespace: dubbo
+spec:
+  configPatches:
+    - applyTo: NETWORK_FILTER
+      match:
+        context: SIDECAR_OUTBOUND
+        listener:
+          name: "10.7.255.146_20880" #svc cluster ip
+          port_number: "20880"
+          filter_chain:
+            filter:
+              name: envoy.tcp_proxy
+      patch:
+        operation: REMOVE
+    - applyTo: NETWORK_FILTER
+      match:
+        context: SIDECAR_OUTBOUND
+        listener:
+            name: "10.7.255.146_20880" #svc cluster ip
+            port_number: "20880"
+          portNumber: 20880
+          filterChain:
+            filter:
+              name: "mixer"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.network.dubbo_proxy
+          config:
+            dubbo_filters:
+              - name: envoy.filters.dubbo.router
+            route_config:
+              - interface: tencent.demo.DemoService #使用.*代表所有接口
+                name: local_route
+                routes:
+                  - match:
+                      method:
+                        name:
+                          safe_regex:
+                            google_re2:
+                              max_program_size: 100
+                            regex: .*
+                    route:
+                      #cluster: hello-dubbo-provider.dubbo
+                      weighted_clusters:
+                        - name: outbound|20880|v1|hello-dubbo-provider.dubbo.svc.cluster.local
+                          weight: 20
+                        - name: outbound|20880|v1|hello-dubbo-provider.dubbo.svc.cluster.local
+                          weight: 80
+            stat_prefix: dubbo_incomming_stats
+            protocol_type: Dubbo
+            serialization_type: Hessian2
+        name: envoy.filters.network.dubbo_proxy
